@@ -7,10 +7,6 @@ uniform vec4 FogColor;
 uniform vec4 SkyColor;
 uniform vec4 FogAndDistanceControl;
 
-uniform vec3 CC_DC = vec3(1.3,1.3,1.1);
-uniform vec3 CC_NC = vec3(0.62,0.62,0.62);
-
-
 highp float fBM(const int octaves, const float lowerBound, const float upperBound, highp vec2 st) {
 	highp float TIME = ViewPositionAndTime.w;
 	highp float value = 0.0;
@@ -27,6 +23,8 @@ highp float fBM(const int octaves, const float lowerBound, const float upperBoun
 }
 void main()
 {
+	vec3 CC_DC = vec3(1.3,1.3,1.1);
+	vec3 CC_NC = vec3(0.62,0.62,0.62);
 	highp float TIME = ViewPositionAndTime.w;
 	vec4 n_color = v_color0;
 float weather = smoothstep(.8,1.,FogAndDistanceControl.y);
