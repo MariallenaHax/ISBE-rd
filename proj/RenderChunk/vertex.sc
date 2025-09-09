@@ -21,6 +21,7 @@ highp float rand(highp vec3 p){
 	highp float x = (p.x+p.y+p.z)/3.0+ViewPositionAndTime.w;
 	return mix(hash11(floor(x)),hash11(ceil(x)),smoothstep(0.0,1.0,fract(x)))*2.0;
 }
+#define a_texcoord1 vec2(fract(a_texcoord1.x*15.9375),floor(a_texcoord1.x*15.9375)*0.0625)
 void main() {
     mat4 model;
 #ifdef INSTANCING
