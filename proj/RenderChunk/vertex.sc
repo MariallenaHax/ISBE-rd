@@ -22,8 +22,7 @@ highp float rand(highp vec3 p){
 	return mix(hash11(floor(x)),hash11(ceil(x)),smoothstep(0.0,1.0,fract(x)))*2.0;
 }
 void main() {
-	uvec2 _1307 = uvec2(round(a_texcoord0 * 65535.0));
-    uvec2 uv0 = vec2(float((_1307.x & 32767u) << uint(1)), float((_1307.y & 32767u) << uint(1))) * vec2_splat(1.525902189314365386962890625e-05);
+	uvec2 uv0 = uvec2(round(a_texcoord0 * 65535.0));
     vec2 uv1 = fract(a_texcoord1.y*vec2(256.0, 4096.0));
     mat4 model;
 #ifdef INSTANCING
@@ -62,7 +61,7 @@ void main() {
         color.a = mix(a_color0.a, 1.0, clamp((camDis / FogAndDistanceControl.w), 0.0, 1.0));
     };
 #endif
-    v_texcoord0 = uv0;
+    v_texcoord0 = vec2(float((uv0.x & 32767u) << uint(1)), float((uv0.y & 32767u) << uint(1))) * vec2_splat(1.525902189314365386962890625e-05);
     v_lightmapUV = uv1;
     v_color0 = color;
     v_fog = fogColor;
