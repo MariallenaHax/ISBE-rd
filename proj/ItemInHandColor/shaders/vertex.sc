@@ -44,5 +44,6 @@ void main() {
     v_light = light;
     v_fog = fog;
     v_texcoord0 = a_texcoord0;
+    position.y = ndc(position.y);
     gl_Position = position;
 }

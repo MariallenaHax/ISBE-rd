@@ -25,10 +25,12 @@ void main() {
 
     v_texcoord0 = a_texcoord0;
     vec3 pos = a_position;
-    v_fog = v_color0;
+    v_fog = SkyColor;
     pos.y -= length(pos.xyz)*.2;
     v_worldPos = mul(model, vec4(a_position, 1.0)).xyz;
     v_color0 = a_color0;
-    gl_Position = mul(u_modelViewProj, vec4(pos, 1.0));
+    vec4 pos2 = mul(u_modelViewProj, vec4(pos, 1.0));
+    pos2.y = ndc(pos2.y);
+    gl_Position = pos2;
     v_prevWorldPos = a_position.xyz;
 }

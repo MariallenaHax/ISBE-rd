@@ -95,5 +95,6 @@ void main() {
 
     v_fog = fog;
     v_light = light;
+    position.y = ndc(position.y);
     gl_Position = position;
 }

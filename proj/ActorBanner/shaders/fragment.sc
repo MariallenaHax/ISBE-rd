@@ -24,7 +24,6 @@ uniform vec4 UVAnimation;
 uniform mat4 Bones[8];
 uniform vec4 BannerColors[7];
 uniform vec4 BannerUVOffsetsAndScales[7];
-
 SAMPLER2D_AUTOREG(s_MatTexture);
 SAMPLER2D_AUTOREG(s_MatTexture1);
 vec3 film(vec3 x){

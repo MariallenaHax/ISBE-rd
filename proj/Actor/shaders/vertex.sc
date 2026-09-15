@@ -3,29 +3,19 @@ $input a_position, a_color0, a_texcoord0, a_indices, a_normal
     $input i_data0, i_data1, i_data2
 #endif
 
-$output v_color0, v_fog, v_light, v_texcoord0
+$output v_color0, v_fog, v_light, v_texcoord0, v_worldPos, v_clipPosition
 
 #include <bgfx_shader.sh>
 #include <utils/FogUtil.h>
 #include <utils/DynamicUtil.h>
-#include <utils/TAAUtil.h>
 
-uniform vec4 ColorBased;
-uniform vec4 ChangeColor;
-uniform vec4 UseAlphaRewrite;
-uniform vec4 TintedAlphaTestEnabled;
-uniform vec4 MatColor;
-uniform vec4 OverlayColor;
-uniform vec4 TileLightColor;
-uniform vec4 MultiplicativeTintColor;
-uniform vec4 FogColor;
 uniform vec4 FogControl;
-uniform vec4 ActorFPEpsilon;
-uniform vec4 LightDiffuseColorAndIntensity;
-uniform vec4 LightWorldSpaceDirection;
-uniform vec4 HudOpacity;
-uniform vec4 UVAnimation;
+uniform vec4 OverlayColor;
+uniform vec4 FogColor;
 uniform mat4 Bones[8];
+#include <utils/TAAUtil.h>
+uniform vec4 TileLightColor;
+uniform vec4 UVAnimation;
 
 void main() {
     mat4 World = u_model[0];
@@ -71,5 +61,8 @@ void main() {
 
     v_fog = fog; 
     v_light = light;
+    v_clipPosition = position;
+    position.y = ndc(position.y);
     gl_Position = position;
+    v_worldPos = worldPosition;
 }

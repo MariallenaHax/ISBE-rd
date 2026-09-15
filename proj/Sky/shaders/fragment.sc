@@ -28,18 +28,24 @@ void main()
 	vec3 CC_NC = vec3(0.62,0.62,0.62);
 	highp float TIME = ViewPositionAndTime.w;
 	vec4 n_color = v_fog;
-float weather = smoothstep(.8,1.,FogAndDistanceControl.y);
-n_color = mix(mix(n_color,FogColor,.33),FogColor,smoothstep(.0,1.,FogColor.r));
+	
+	float weather = smoothstep(.8,1.,FogAndDistanceControl.y);
+	n_color = mix(mix(n_color,FogColor,.33),FogColor,smoothstep(.0,1.,v_color0.r));
 
 	float cm;
 	float day = smoothstep(.15,.25,FogColor.g);
 	vec3 cc = mix(CC_NC,CC_DC,day);
 	float lb = mix(.0,.55,weather);
-	#if BGFX_SHADER_LANGUAGE_HLSL
+	#if BGFX_SHADER_LANGUAGE_HLSL || BGFX_SHADER_LANGUAGE_SPIRV
 	cm = fBM(10,lb,1.2,v_prevWorldPos.xz*4.5 -TIME*.005);
 	#else
 	cm = -fBM(10,lb,1.2,v_prevWorldPos.xz*4.5 -TIME*.005);
 	#endif
 	n_color.rgb = mix(n_color.rgb, cc, cm);
-gl_FragColor = mix(n_color, FogColor, v_color0.r);
+
+	//RC	
+	gl_FragColor = mix(n_color, FogColor, v_color0.r);
+
+	//NC
+	//gl_FragColor = mix(v_fog, FogColor, v_color0.r);
 }

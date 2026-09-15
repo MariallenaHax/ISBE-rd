@@ -1,26 +1,23 @@
-$input v_color0, v_fog, v_light, v_texcoord0
+$input v_color0, v_fog, v_light, v_texcoord0, v_worldPos, v_clipPosition
+
+uniform vec4 UseAlphaRewrite;
 
 #include <bgfx_shader.sh>
+
 #include <utils/ActorUtil.h>
 #include <utils/FogUtil.h>
-#include <utils/snoise.h>
 
-uniform vec4 ColorBased;
 uniform vec4 ChangeColor;
-uniform vec4 UseAlphaRewrite;
-uniform vec4 TintedAlphaTestEnabled;
-uniform vec4 MatColor;
 uniform vec4 OverlayColor;
-uniform vec4 TileLightColor;
-uniform vec4 MultiplicativeTintColor;
-uniform vec4 FogColor;
-uniform vec4 FogControl;
 uniform vec4 ActorFPEpsilon;
-uniform vec4 LightDiffuseColorAndIlluminance;
-uniform vec4 LightWorldSpaceDirection;
+uniform vec4 ColorBased;
+uniform vec4 DitherParams2[3];
+uniform vec4 DitherParams;
+uniform vec4 DitheringEnabledToggle;
 uniform vec4 HudOpacity;
-uniform vec4 UVAnimation;
-uniform mat4 Bones[8];
+uniform vec4 MatColor;
+uniform vec4 TintedAlphaTestEnabled;
+uniform vec4 MultiplicativeTintColor;
 
 SAMPLER2D_AUTOREG(s_MatTexture);
 SAMPLER2D_AUTOREG(s_MatTexture1);
@@ -46,8 +43,21 @@ void main() {
 
     vec4 albedo = getActorAlbedoNoColorChange(v_texcoord0, s_MatTexture, s_MatTexture1, MatColor);
 #if ALPHA_TEST_PASS
-    float alpha = mix(albedo.a, (albedo.a * OverlayColor.a), TintedAlphaTestEnabled.x);
-    if(shouldDiscard(albedo.rgb, alpha, ActorFPEpsilon.x)) {
+    float alpha = lerp(albedo.a, (albedo.a * OverlayColor.a), TintedAlphaTestEnabled.x);
+    bool dither;
+    if (DitheringEnabledToggle.x != 0.0)
+    {
+        vec2 _1306 = floor(((((v_clipPosition.xyz / vec3(v_clipPosition.w,v_clipPosition.w,v_clipPosition.w)).xy * 0.5) + vec2(0.5,0.5)) * DitherParams.xy) / vec2(DitherParams2[0].z,DitherParams2[0].z)) * DitherParams2[0].z;
+        vec2 _1308 = floor(_1306 * 0.25);
+        vec2 _1309 = floor(_1306 * 0.5);
+        vec2 _1310 = floor(_1306);
+        dither = smoothstep(DitherParams2[0].x, DitherParams2[0].y, dot(-normalize(u_view[2].xyz), v_worldPos - (vec4(0.0, 0.0, 0.0, 1.0) * u_invView[0]).xyz)) <= (((((((fract((_1308.x * 0.5) + ((_1308.y * _1308.y) * 0.75)) * 0.25) + fract((_1309.x * 0.5) + ((_1309.y * _1309.y) * 0.75))) * 0.25) + fract((_1310.x * 0.5) + ((_1310.y * _1310.y) * 0.75))) * 64.0) + 0.5) * 0.015625);
+    }
+    else
+    {
+        dither = false;
+    }
+    if(dither || shouldDiscard(albedo.rgb, alpha, ActorFPEpsilon.x)) {
         discard;
     }
 #endif // ALPHA_TEST
